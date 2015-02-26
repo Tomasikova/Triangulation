@@ -1,0 +1,70 @@
+package triangulation;
+ 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+ 
+/**
+ *
+ * @author Filip_M
+ */
+public class Vypis {
+     
+ 
+    public void vypisZoznamBodov(Triangulacia tria) {
+        for (int i = 0; i < tria.getCellNodes().size(); i++) {
+            System.out.println(tria.getCellNodes().get(i));
+        }
+    }
+     
+    public void vypisZoznamBodovDoSuboru(Triangulacia tria) throws IOException {
+        PrintWriter nodes = new PrintWriter("sphere"+tria.getCellNodes().size()+"nodes.dat");
+         
+        for (int i = 0; i < tria.getCellNodes().size(); i++) {
+            nodes.println(tria.getCellNodes().get(i));
+        }
+         
+        nodes.close();
+    }
+ 
+    public void vypisZoznamTroj(Triangulacia tria) {
+        for (int i = 0; i < tria.getCellTriangles().size(); i++) {
+            Trojuholnik t = (Trojuholnik) tria.getCellTriangles().get(i);
+            System.out.println(tria.getPozicia(t));
+        }
+    }
+     
+    public void vypisZoznamTrojDoSuboru(Triangulacia tria) throws FileNotFoundException {
+        PrintWriter triangles = new PrintWriter("sphere"+tria.getCellNodes().size()+"triangles.dat");
+         
+        for (int i = 0; i < tria.getCellTriangles().size(); i++) {
+            Trojuholnik t = (Trojuholnik) tria.getCellTriangles().get(i);
+            triangles.println(tria.getPozicia(t));
+        }
+         
+        triangles.close();
+    }
+     
+    public void triangulationToVTK(Triangulacia tria, String fileName) throws FileNotFoundException {
+        PrintWriter vtk = new PrintWriter(fileName + ".vtk");
+     
+        vtk.print("# vtk DataFile Version 3.0\n"
+                + "Data\n"
+                + "ASCII\n"
+                + "DATASET POLYDATA\n"
+                + "POINTS " + tria.cellNodes.size() + " float\n");
+         
+        for (int i = 0; i < tria.cellNodes.size(); i++) {
+            vtk.println(tria.cellNodes.get(i));
+        }
+         
+        vtk.println("TRIANGLE_STRIPS " + tria.cellTriangles.size() + " " + 4*tria.cellTriangles.size());
+         
+        for (int i = 0; i < tria.getCellTriangles().size(); i++) {
+            Trojuholnik t = (Trojuholnik) tria.getCellTriangles().get(i);
+            vtk.println("3 " + tria.getPozicia(t));
+        }
+         
+        vtk.close();
+    }
+}
